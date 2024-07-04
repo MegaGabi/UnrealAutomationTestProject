@@ -1,5 +1,7 @@
 # Visual Studio 2015 user specific files
 .vs/
+BuildFromBat
+Stage
 
 # Compiled Object files
 *.slo
