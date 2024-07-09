@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
+#include "TPTypes.h"
 #include "TestProjectCharacter.generated.h"
 
 class UInputComponent;
@@ -13,6 +14,8 @@ class UCameraComponent;
 class UInputAction;
 class UInputMappingContext;
 struct FInputActionValue;
+
+class UTPInventoryComponent;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
@@ -40,9 +43,6 @@ class ATestProjectCharacter : public ACharacter
 public:
 	ATestProjectCharacter();
 
-protected:
-	virtual void BeginPlay();
-
 public:
 		
 	/** Look Input Action */
@@ -67,5 +67,28 @@ public:
 	/** Returns FirstPersonCameraComponent subobject **/
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 
+	///// V V V NON TEMPLATE CODE BELOW V V V /////
+public:
+	UFUNCTION(BlueprintCallable, Category = "Health")
+	float GetHeallthPercent() const;
+
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UTPInventoryComponent* InventoryComponent;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Health")
+	FHealthData HealthData;
+
+	virtual void BeginPlay() override;
+
+private:
+	float Health{ 0.0f };
+	FTimerHandle HealTimerHandle;
+
+	UFUNCTION()
+	void OnAnyDamageReceived(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
+
+	void OnHealing();
+	void OnDeath();
 };
 

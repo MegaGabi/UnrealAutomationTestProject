@@ -10,6 +10,9 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "Engine/LocalPlayer.h"
+#include "TestProject/Components/TPInventoryComponent.h"
+#include "TimerManager.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -36,12 +39,67 @@ ATestProjectCharacter::ATestProjectCharacter()
 	//Mesh1P->SetRelativeRotation(FRotator(0.9f, -19.19f, 5.2f));
 	Mesh1P->SetRelativeLocation(FVector(-30.f, 0.f, -150.f));
 
+
+	InventoryComponent = CreateDefaultSubobject<UTPInventoryComponent>("InventoryComponent");
 }
 
 void ATestProjectCharacter::BeginPlay()
 {
-	// Call the base class  
 	Super::BeginPlay();
+	check(HealthData.MaxHealth > 0.0f);
+	Health = HealthData.MaxHealth;
+
+	OnTakeAnyDamage.AddDynamic(this, &ATestProjectCharacter::OnAnyDamageReceived);
+}
+
+void ATestProjectCharacter::OnAnyDamageReceived(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
+{
+	const auto IsAlive = [&]() { return Health > 0.0f; };
+	if (Damage <= 0.0f || !IsAlive()) return;
+
+	Health = FMath::Clamp(Health - Damage, 0.0f, HealthData.MaxHealth);
+	if (IsAlive())
+	{
+		GetWorldTimerManager().SetTimer(HealTimerHandle, this, &ATestProjectCharacter::OnHealing, HealthData.HealRate, true, -1.0f);
+	}
+	else
+	{
+		OnDeath();
+	}
+}
+
+void ATestProjectCharacter::OnHealing()
+{
+	Health = FMath::Clamp(Health + HealthData.HealModifier, 0.0f, HealthData.MaxHealth);
+	if (FMath::IsNearlyEqual(Health, HealthData.MaxHealth))
+	{
+		Health = HealthData.MaxHealth;
+		GetWorldTimerManager().ClearTimer(HealTimerHandle);
+	}
+}
+
+void ATestProjectCharacter::OnDeath()
+{
+	GetWorldTimerManager().ClearTimer(HealTimerHandle);
+
+	check(GetCharacterMovement());
+	check(GetCapsuleComponent());
+	check(GetMesh());
+	GetCharacterMovement()->DisableMovement();
+	GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	GetMesh()->SetSimulatePhysics(true);
+	if (Controller)
+	{
+		Controller->ChangeState(NAME_Spectating);
+	}
+
+	SetLifeSpan(HealthData.LifeSpan);
+}
+
+float ATestProjectCharacter::GetHeallthPercent() const
+{
+	return Health / HealthData.MaxHealth;
 }
 
 //////////////////////////////////////////////////////////////////////////// Input
