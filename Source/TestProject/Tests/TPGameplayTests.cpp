@@ -294,6 +294,8 @@ void FAllItemsAreTakenOnRecordingMovementComplex::GetTests(TArray<FString>& OutB
 
 	const TArray<FTestData> TestData =
 	{
+		{"CustomMapTimeSync", "/Game/FirstPerson/Maps/FirstPersonMap", FPaths::GameSourceDir()
+			.Append("TestProject/Tests/Data/TimeSyncTest.json")},
 		{"MainMapParkour", "/Game/FirstPerson/Maps/FirstPersonMap", FPaths::GameSourceDir()
 			.Append("TestProject/Tests/Data/ParkourTestMoveData.json")},
 		{"CustomMapParkour", "/Game/Tests/CustomFirstPersonMap", FPaths::GameSourceDir()
