@@ -134,22 +134,19 @@ void FTurret::Define()
 			LatentBeforeEach(
 				[this, InitialAmmoCount, FireFreq](const FDoneDelegate& TestDone)
 				{
-					AsyncTask(ENamedThreads::GameThread,
-						[&]()
-						{
-							AutomationOpenMap(MapName);
-							World = GetTestGameWorld();
-							TestNotNull("World exists", World);
+					AutomationOpenMap(MapName);
+					World = GetTestGameWorld();
+					TestNotNull("World exists", World);
 
-							const UBlueprint* Blueprint = LoadObject<UBlueprint>(nullptr, *TurretBPTestName);
-							TestNotNull(TEXT("Inventory item exists"), Blueprint);
+					const UBlueprint* Blueprint = LoadObject<UBlueprint>(nullptr, *TurretBPTestName);
+					TestNotNull(TEXT("Inventory item exists"), Blueprint);
 
-							Turret = World->SpawnActor<ATPTurret>(Blueprint->GeneratedClass, FTransform::Identity);
-							TestNotNull(TEXT("Turret exists"), Turret);
+					Turret = World->SpawnActor<ATPTurret>(Blueprint->GeneratedClass, FTransform::Identity);
+					TestNotNull(TEXT("Turret exists"), Turret);
 
-							CallFuncByNameWithParams(
-								Turret, "SetTurretData", { FString::FromInt(InitialAmmoCount), FString::SanitizeFloat(FireFreq) });
-						});
+					CallFuncByNameWithParams(
+						Turret, "SetTurretData", { FString::FromInt(InitialAmmoCount), FString::SanitizeFloat(FireFreq) });
+					FPlatformProcess::Sleep(1.0f);
 					TestDone.Execute();
 				});
 
@@ -157,21 +154,18 @@ void FTurret::Define()
 				EAsyncExecution::ThreadPool,
 				[this, InitialAmmoCount, FireFreq](const FDoneDelegate& TestDone)
 				{
+					FPlatformProcess::Sleep(1.0f);
 					TestDone.Execute();
 				});
 
 			LatentAfterEach(
 				[this](const FDoneDelegate& TestDone)
 				{
-					AsyncTask(ENamedThreads::GameThread,
-						[&]()
-						{
-							SpecCloseLevel(World);
-						});
+					SpecCloseLevel(World);
+					FPlatformProcess::Sleep(1.0f);
 					TestDone.Execute();
 				});
-		});
-		*/
+		});*/
 }
 
 #endif
