@@ -2,7 +2,7 @@
 
 call "%~dp0\..\config.bat"
 
-goto:skipbuild
+rem build sources
 call "%RunUATPath%" BuildCookRun ^
 -project="%ProjectPath%" ^
 -platform="%Platform%" ^
@@ -14,7 +14,6 @@ call "%RunUATPath%" BuildCookRun ^
 rem run tests
 "%EditorPath%" "%ProjectPath%" -ExecCmds="Automation RunTests %TestName%;Quit" ^
 -log -abslog="%TestOutputLogPath%" -nosplash -ReportOutputPath="%ReportOutputPath%"
-:skipbuild
 
 rem copy test artifacts
 set TestsDir=%~dp0
