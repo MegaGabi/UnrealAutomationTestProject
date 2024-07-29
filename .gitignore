@@ -2,6 +2,7 @@
 .vs/
 devops/tests/data
 BuildFromBat
+BuildFromEditor
 Stage
 
 # Compiled Object files

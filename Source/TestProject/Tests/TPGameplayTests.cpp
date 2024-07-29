@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#if WITH_AUTOMATION_TESTS
+#if !UE_BUILD_SHIPPING
 
 #include "Tests/TPGameplayTests.h"
 #include "Tests/TestUtils.h"
