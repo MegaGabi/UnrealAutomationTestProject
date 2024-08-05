@@ -28,7 +28,11 @@ public class TestProject : ModuleRules
                 new string[] {
 					"UnrealEd",
 					"UATHelper",
-					"SettingsEditor"
+					"SettingsEditor",
+					"Persona",
+					"SkeletalMeshEditor",
+                    "SkeletalMeshUtilitiesCommon",
+                    "AdvancedPreviewScene"
                 }
             );
         }
