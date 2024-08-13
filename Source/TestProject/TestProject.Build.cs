@@ -1,6 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 using UnrealBuildTool;
+using UnrealBuildTool.Rules;
 
 public class TestProject : ModuleRules
 {
@@ -32,7 +33,10 @@ public class TestProject : ModuleRules
 					"Persona",
 					"SkeletalMeshEditor",
                     "SkeletalMeshUtilitiesCommon",
-                    "AdvancedPreviewScene"
+                    "AdvancedPreviewScene",
+                    "LauncherServices",
+					"DeviceProfileServices",
+					"TargetDeviceServices"
                 }
             );
         }
